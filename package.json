@@ -9,13 +9,14 @@
   "keywords": [
     "git",
     "commit",
-    "shelljs"
+    "shelljs",
+    "travis"
   ],
   "repository": {
     "type": "git",
     "url": "git://github.com/nfischer/git-precommit.git"
   },
-  "author": "Nate Fischer",
+  "author": "Nate Fischer <ntfschr@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "shelljs": "^0.5.3"
