@@ -11,6 +11,10 @@
     "commit",
     "shelljs"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nfischer/git-precommit.git"
+  },
   "author": "Nate Fischer",
   "license": "MIT",
   "devDependencies": {
