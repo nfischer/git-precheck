@@ -1,0 +1,5 @@
+.DS_Store
+[._]*.s[a-w][a-z]
+*~
+
+node_modules/

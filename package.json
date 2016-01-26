@@ -1,0 +1,19 @@
+{
+  "name": "git-precommit",
+  "version": "0.1.0",
+  "description": "Run pre-commit checks before making commits to projects",
+  "main": "git-precommit.js",
+  "scripts": {
+    "test": "echo 'No tests yet!'"
+  },
+  "keywords": [
+    "git",
+    "commit",
+    "shelljs"
+  ],
+  "author": "Nate Fischer",
+  "license": "MIT",
+  "devDependencies": {
+    "shelljs": "^0.5.3"
+  }
+}
