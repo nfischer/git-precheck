@@ -38,7 +38,7 @@ if (!buildSteps) {
   if (isNode)
     buildSteps = ['npm test'];
   else if (isC)
-    buildSteps = ['./configure && make && make test'];
+    buildSteps = ['./configure', 'make', 'make test'];
   else // last resort
     buildSteps = [];
 }
