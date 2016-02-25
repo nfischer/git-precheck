@@ -12,20 +12,11 @@ if (pwd().toString === '/') {
   exit(1);
 }
 
-var isNode = test('-f', 'package.json');
-var isC = test('-f', 'Makefile');
 var hasTravis = test('-f', '.travis.yml');
 
 // -- No errors (for a while) --
-config.fatal = true;
+set('-e');
 
-// Install dependencies
-if (isNode) {
-  echo('Installing node dependencies');
-  exec('npm install');
-}
-
-// Install dependencies
 var ci = {};
 var ciFile;
 if (hasTravis)
@@ -41,18 +32,44 @@ if (ciFile) {
   }
 }
 
+// Language
+if (!ci.language) {
+  if (test('-f', 'package.json'))
+    ci.language = 'node';
+  else if (test('-f', 'Makefile'))
+    ci.language = 'c';
+  else
+    ci.language = 'ruby'; // Travis's default
+}
+
+ci.language = ci.language.toLowerCase();
+if (ci.language.match(/node/))
+  ci.language = 'node';
+else if (ci.language.match(/c(\+\+)?/))
+  ci.language = 'c';
+
+// Install dependencies
+if (ci.language.substr(0, 4) === 'node') {
+  echo('Installing node dependencies');
+  exec('npm install');
+}
+
 if (!ci.script) {
   echo('Warning: could not find any build steps. Using defaults.');
-  if (isNode)
-    ci.script = ['npm test'];
-  else if (isC)
-    ci.script = ['./configure', 'make', 'make test'];
-  else // last resort
-    ci.script = [];
+  switch(ci.language) {
+    case 'node':
+      ci.script = ['npm test'];
+      break;
+    case 'c':
+      ci.script = ['./configure', 'make', 'make test'];
+      break;
+    default:
+      ci.script = [];
+  }
 }
 
 // -- Now let's catch the errors and report them --
-config.fatal = false;
+set('+e');
 
 var results = {};
 ci.script.forEach(function (cmd) {
@@ -63,13 +80,13 @@ ci.script.forEach(function (cmd) {
   results[cmd] = exec(cmd).code;
 });
 
-var ret_code = 0;
+var retCode = 0;
 echo('\nSummary of build steps:');
 for (var cmd in results) {
   var checkmark = '\u221A';
   var frownyface = '\u2639';
   var unicode_indicator = results[cmd] === 0 ? checkmark : frownyface;
   echo(unicode_indicator + '  $ ' + cmd);
-  ret_code += results[cmd];
+  retCode = retCode || results[cmd];
 }
-exit(ret_code);
+exit(retCode);
