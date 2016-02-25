@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 require('shelljs/global');
+yaml = require('js-yaml');
+fs   = require('fs');
 
 // Change to the root of the repo
 while (!test('-d', '.git/') && pwd().toString() !== '/')
@@ -13,7 +15,6 @@ if (pwd().toString === '/') {
 var isNode = test('-f', 'package.json');
 var isC = test('-f', 'Makefile');
 var hasTravis = test('-f', '.travis.yml');
-var buildSteps;
 
 // -- No errors (for a while) --
 config.fatal = true;
@@ -25,29 +26,36 @@ if (isNode) {
 }
 
 // Install dependencies
-if (hasTravis) {
-  echo('Extracting build steps from travis');
-  buildSteps = cat('.travis.yml').replace(/^(.|\n)*script: *\n/, '').replace(/\n[a-z](.|\n)*/, '').split('\n');
-  buildSteps = buildSteps.map(function(step) {
-    return step.replace(/^ *- */, '').trim();
-  });
+var ci = {};
+var ciFile;
+if (hasTravis)
+  ciFile = '.travis.yml';
+// TODO(nate): add support for appveyor
+
+if (ciFile) {
+  echo('Extracting build steps from ' + ciFile);
+  try {
+    ci = yaml.safeLoad(fs.readFileSync(ciFile, 'utf8'));
+  } catch (e) {
+    console.error('Unable to read ' + ciFile);
+  }
 }
 
-if (!buildSteps) {
+if (!ci.script) {
   echo('Warning: could not find any build steps. Using defaults.');
   if (isNode)
-    buildSteps = ['npm test'];
+    ci.script = ['npm test'];
   else if (isC)
-    buildSteps = ['./configure', 'make', 'make test'];
+    ci.script = ['./configure', 'make', 'make test'];
   else // last resort
-    buildSteps = [];
+    ci.script = [];
 }
 
-// -- Now let's catch the errors and report them -- 
+// -- Now let's catch the errors and report them --
 config.fatal = false;
 
 var results = {};
-buildSteps.forEach(function (cmd) {
+ci.script.forEach(function (cmd) {
   if (!cmd)
     return;
   if (cmd.match(/^#.*$/))
