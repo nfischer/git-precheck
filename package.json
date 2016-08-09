@@ -1,10 +1,10 @@
 {
   "name": "git-precheck",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Run pre-commit checks before making commits to projects",
   "main": "index.js",
   "scripts": {
-    "test": "echo 'No tests yet!'"
+    "test": "echo 'No tests yet!' && exit 1"
   },
   "keywords": [
     "git",
@@ -22,6 +22,7 @@
   "author": "Nate Fischer <ntfschr@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "colors": "^1.1.2",
     "js-yaml": "^3.5.3",
     "shelljs": "^0.6.0"
   }

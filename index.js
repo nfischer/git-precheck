@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 require('shelljs/global');
-yaml = require('js-yaml');
-fs   = require('fs');
+var yaml = require('js-yaml');
+var fs   = require('fs');
+var colors = require('colors');
 
 // Change to the root of the repo
 while (!test('-d', '.git/') && pwd().toString() !== '/')
@@ -14,7 +15,7 @@ if (pwd().toString === '/') {
 
 var hasTravis = test('-f', '.travis.yml');
 
-// -- No errors (for a while) --
+// If any errors occur, don't continue
 set('-e');
 
 var ci = {};
@@ -39,7 +40,7 @@ if (!ci.language) {
   else if (test('-f', 'Makefile'))
     ci.language = 'c';
   else
-    ci.language = 'ruby'; // Travis's default
+    ci.language = 'ruby'; // Travis's default language
 }
 
 ci.language = ci.language.toLowerCase();
@@ -68,7 +69,7 @@ if (!ci.script) {
   }
 }
 
-// -- Now let's catch the errors and report them --
+// Now let's catch the errors and report them
 set('+e');
 
 var results = {};
@@ -83,10 +84,10 @@ ci.script.forEach(function (cmd) {
 var retCode = 0;
 echo('\nSummary of build steps:');
 for (var cmd in results) {
-  var checkmark = '\u221A';
-  var frownyface = '\u2639';
-  var unicode_indicator = results[cmd] === 0 ? checkmark : frownyface;
-  echo(unicode_indicator + '  $ ' + cmd);
+  var greenCheckmark = '\u2713'.green.bold;
+  var redX = '\u2717'.red.bold;
+  var unicode_indicator = results[cmd] === 0 ? greenCheckmark : redX;
+  echo(unicode_indicator + ' $ ' + cmd);
   retCode = retCode || results[cmd];
 }
 exit(retCode);
