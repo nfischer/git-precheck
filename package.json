@@ -1,23 +1,23 @@
 {
-  "name": "git-precommit",
-  "version": "0.1.0",
+  "name": "git-precheck",
+  "version": "0.2.0",
   "description": "Run pre-commit checks before making commits to projects",
-  "main": "git-precommit.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo 'No tests yet!'"
   },
   "keywords": [
     "git",
-    "commit",
+    "precheck",
     "shelljs",
     "travis"
   ],
   "bin": {
-    "git-precommit.js": "./git-precommit.js"
+    "git-precheck": "index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/nfischer/git-precommit.git"
+    "url": "git://github.com/nfischer/git-precheck.git"
   },
   "author": "Nate Fischer <ntfschr@gmail.com>",
   "license": "MIT",
